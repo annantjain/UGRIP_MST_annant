@@ -47,7 +47,7 @@ wandb.init(
     project=f"{EXPERIMENT_NAME}_train",
 )
 
-TRANSFORMER="roberta-base"
+TRANSFORMER=opts.transformer
 tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
 
 tolerance = 20

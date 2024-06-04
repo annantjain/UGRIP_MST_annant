@@ -12,7 +12,6 @@ import os
 
 
 
-
 def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--Exp_name', type=str, default='roberta=base', help='Experiement Name of Run')
@@ -34,20 +33,8 @@ def parse_args():
     opts = parser.parse_args()
     return opts
 
-'''
-num_train_epochs=2,              # total number of training epochs
-    per_device_train_batch_size=8,  # batch size per device during training
-    per_device_eval_batch_size=16,   # batch size for evaluation
-    warmup_ratio=0.1,                # number of warmup steps for learning rate scheduler
-    learning_rate=1e-06,
-    weight_decay=0.01, 
-'''
-
-
 
 opts = parse_args()
-
-
 
 
 EXPERIMENT_NAME = opts.model #"roberta-base"
@@ -123,7 +110,7 @@ training_args = TrainingArguments(
 
 config = AutoConfig.from_pretrained(TRANSFORMER)
 model = AutoModelForSequenceClassification.from_config(config)
-#model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_classes=2)
+
 
 trainer = Trainer(
     model=model,                         # the instantiated 🤗 Transformers model to be trained

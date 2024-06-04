@@ -2,7 +2,6 @@ import argparse
 from datasets import load_dataset
 from sklearn.model_selection import train_test_split
 from transformers import RobertaTokenizerFast,RobertaForSequenceClassification, Trainer, TrainingArguments, DataCollatorWithPadding, AutoConfig, AutoModelForSequenceClassification, AutoTokenizer
-#Autotokenize, automodel for seq class
 import torch
 from torch.utils.data import DataLoader, Dataset
 from sklearn.metrics import accuracy_score, classification_report
@@ -11,10 +10,11 @@ import wandb
 import os
 
 
+print("------------Dependancies Downloaded---------------------")
 
 def parse_args():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--Exp_name', type=str, default='roberta=base', help='Experiement Name of Run')
+    parser.add_argument('--Exp_name', type=str, default='roberta-base', help='Experiement Name of Run')
     parser.add_argument('--transformer', type=str, default='roberta-base', help='Transformer Model to be used')
     parser.add_argument('--cache', type=str, default='/scratch/afz225/.cache', help='Cache with Dataset')
     parser.add_argument('--save', type=str, default='./STTS_roberta-base', help='Save path for the final model')
@@ -22,12 +22,12 @@ def parse_args():
     parser.add_argument('--tol', type=int, default=20, help='Tolerance')
     parser.add_argument('--test_size', type=int, default=0.1, help='Test data size')
 
-    parser.add_argument('--tr_ep', type=int, default=2, help='Training Epochs')
-    parser.add_argument('--tr_batch', type=int, default=8, help='Training Batch Size Per device')
+    parser.add_argument('--tr_ep', type=int, default=2, help='Training Epochs') #4
+    parser.add_argument('--tr_batch', type=int, default=8, help='Training Batch Size Per device') #8
     parser.add_argument('--ev_batch', type=int, default=16, help='Evaluation Batch Size Per device')
-    parser.add_argument('--warmup', type=int, default=0.1, help='Warmup steps for learning rate scheduler')
-    parser.add_argument('--lr', type=int, default=1e-06, help='Learning rate')
-    parser.add_argument('--decay', type=int, default=0.01, help='Weight Decay')
+    parser.add_argument('--warmup', type=float, default=0.1, help='Warmup steps for learning rate scheduler')
+    parser.add_argument('--lr', type=float, default=1e-06, help='Learning rate') #
+    parser.add_argument('--decay', type=float, default=0.01, help='Weight Decay')
 
 
     opts = parser.parse_args()
@@ -37,7 +37,7 @@ def parse_args():
 opts = parse_args()
 
 
-EXPERIMENT_NAME = opts.model #"roberta-base"
+EXPERIMENT_NAME = opts.Exp_name #"roberta-base"
 CACHE_DIR = opts.cache #"/scratch/afz225/.cache"
 MODEL_SAVE_PATH = opts.save #"./STTS_roberta-base"
 
@@ -46,7 +46,7 @@ wandb.login()
 wandb.init(
     project=f"{EXPERIMENT_NAME}_train",
 )
-
+   
 TRANSFORMER=opts.transformer
 tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
 
@@ -75,6 +75,8 @@ class StatementDataset(torch.utils.data.Dataset):
 train_dataset = StatementDataset(train_statements, train_labels)
 val_dataset = StatementDataset(val_statements, val_labels)
 
+print("------------Dataset Made---------------------")
+
 clf_metrics = evaluate.combine(["accuracy", "f1", "precision", "recall"])
 
 def compute_metrics(eval_pred):
@@ -102,6 +104,7 @@ training_args = TrainingArguments(
     logging_steps=1000,
     save_steps=1000,
     evaluation_strategy='steps',
+    dataloader_num_workers=8,
     save_total_limit=2,
     load_best_model_at_end= True,
     metric_for_best_model='f1',
@@ -110,7 +113,7 @@ training_args = TrainingArguments(
 
 config = AutoConfig.from_pretrained(TRANSFORMER)
 model = AutoModelForSequenceClassification.from_config(config)
-
+#model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_classes=2)
 
 trainer = Trainer(
     model=model,                         # the instantiated 🤗 Transformers model to be trained
@@ -121,6 +124,7 @@ trainer = Trainer(
     data_collator=data_collator
 )
 
+print("------------Beginning Training---------------------")
 
 trainer.train()
 

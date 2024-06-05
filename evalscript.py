@@ -20,7 +20,7 @@ CACHE=None
 def dataloader_evaluate(dataset_name, label):
   lang_accuracies = {}
   #clf_metrics = evaluate.combine(["accuracy", "f1", "precision", "recall"])
-  clf_metrics=evaluate.load("f1")
+  clf_metrics=evaluate.load("accuracy")
   langs = get_dataset_config_names(f"mbzuai-ugrip-statement-tuning/{dataset_name}")
   print(langs)
 

@@ -1,6 +1,6 @@
 import os
 
-lr = [1e-6,2e-6,3e-6,1e-7,2e-7]
+lr = [1e-6,1e-7,2e-7]
 warm = [0.1,0.15,0.2]
 
 for i in range(len(lr)):

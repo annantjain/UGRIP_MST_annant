@@ -1,5 +1,5 @@
 absl-py==2.1.0
-accelerate==0.26.1
+accelerate
 accessible-pygments==0.0.4
 adapters==0.1.2
 aiohttp==3.9.3
@@ -13,7 +13,7 @@ appdirs==1.4.4
 arguments==76
 asttokens 
 async-timeout==4.0.3
-attacut==1.0.6
+attacut
 attrs==23.2.0
 backcall 
 blinker==1.7.0
@@ -49,7 +49,7 @@ emoji==2.11.0
 evaluate==0.4.1
 exceptiongroup==1.2.0
 executing 
-fairscale==0.4.13
+fairscale
 filelock==3.13.1
 fire==0.5.0
 #flash-attn==2.5.7  #Not working 
@@ -86,7 +86,7 @@ jupyter_core
 jupyterlab_widgets==3.0.10
 kiwisolver==1.4.5
 langcodes 
-laserembeddings==1.1.2
+laserembeddings
 lemminflect==0.2.3
 Levenshtein==0.25.0
 # llama #Not working 

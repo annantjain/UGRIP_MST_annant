@@ -158,7 +158,7 @@ responses==0.18.0
 rich 
 rouge_score==0.1.2
 sacrebleu==2.4.0
-sacremoses==0.1.1
+sacremoses
 safetensors==0.4.2
 scikit-learn==1.4.0
 scipy==1.12.0

@@ -44,6 +44,7 @@ MODEL_SAVE_PATH = opts.save #"./STTS_roberta-base"
 os.environ["WANDB_PROJECT"]=f"{EXPERIMENT_NAME}_train"
 wandb.login()
 wandb.init(
+    entity="mbzuai-ugrip",
     project=f"{EXPERIMENT_NAME}_train",
     name=f"{EXPERIMENT_NAME}_{opts.lr}_{opts.tr_batch}_{opts.warmup}_{opts.decay}"
 )

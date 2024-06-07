@@ -45,6 +45,8 @@ os.environ["WANDB_PROJECT"]=f"{EXPERIMENT_NAME}_train"
 wandb.login()
 wandb.init(
     project=f"{EXPERIMENT_NAME}_train",
+    name=f"{EXPERIMENT_NAME}_{opts.lr}_{opts.tr_batch}_{opts.warmup}_{opts.decay}"
+)
 )
    
 TRANSFORMER=opts.transformer
@@ -54,7 +56,7 @@ tolerance = 20
 data = load_dataset('ashabrawy/STTS', cache_dir=CACHE_DIR)
 train = data['train'].filter(lambda example: example["is_true"] is not None).filter(lambda example: len(tokenizer(example['statement'])['input_ids']) < 514+tolerance)
 
-train = train.train_test_split(test_size=50000)['test']
+#train = train.train_test_split(test_size=50000)['test']
 train_statements, val_statements, train_labels, val_labels = train_test_split(train['statement'], train['is_true'], test_size=opts.test_size)
 
 class StatementDataset(torch.utils.data.Dataset):

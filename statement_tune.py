@@ -47,7 +47,6 @@ wandb.init(
     project=f"{EXPERIMENT_NAME}_train",
     name=f"{EXPERIMENT_NAME}_{opts.lr}_{opts.tr_batch}_{opts.warmup}_{opts.decay}"
 )
-)
    
 TRANSFORMER=opts.transformer
 tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)

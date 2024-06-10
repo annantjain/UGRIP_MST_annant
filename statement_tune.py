@@ -16,7 +16,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--Exp_name', type=str, default='roberta-base', help='Experiement Name of Run')
     parser.add_argument('--transformer', type=str, default='roberta-base', help='Transformer Model to be used')
-    parser.add_argument('--cache', type=str, default='/scratch/afz225/.cache', help='Cache with Dataset')
+    parser.add_argument('--cache', type=str, default='', help='Cache with Dataset')
     parser.add_argument('--save', type=str, default='./STTS_roberta-base', help='Save path for the final model')
 
     parser.add_argument('--tol', type=int, default=20, help='Tolerance')
@@ -62,7 +62,7 @@ data = load_dataset('ashabrawy/STTS', cache_dir=CACHE_DIR)
 train = data['train'].filter(lambda example: example["is_true"] is not None).filter(lambda example: len(tokenizer(example['statement'])['input_ids']) < 514+tolerance)
 
 train = train.train_test_split(test_size=opts.tr_size*1000)['test']
-train_statements, val_statements, train_labels, val_labels = train_test_split(train['statement'], train['is_true'], test_size=opts.test_size, random_state=SEED)
+train_statements, val_statements, train_labels, val_labels = train_test_split(train['statement'], train['is_true'], test_size=opts.test_size, seed=SEED, shuffle=True)
 
 class StatementDataset(torch.utils.data.Dataset):
     def __init__(self, statements, labels):

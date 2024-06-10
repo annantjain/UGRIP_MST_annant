@@ -56,14 +56,13 @@ if __name__ == "__main__":
   parser = argparse.ArgumentParser()
 
   parser.add_argument("--model", help='HuggingFace path to model')
-  parser.add_argument("--tokenizer", help='HuggingFace path to tokenizer')
   parser.add_argument("--cache", help='cachedir for HuggingFace datasets', default=None)
   
   args = parser.parse_args()
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
   model = AutoModelForSequenceClassification.from_pretrained(args.model).eval().to(device)
-  tokenizer = AutoTokenizer.from_pretrained(args.tokenizer)
+  tokenizer = AutoTokenizer.from_pretrained(args.model)
 
   print(f"XCOPA Accuracy: {dataloader_evaluate('xcopa', 'label')}")
   print(f"XNLI Accuracy: {dataloader_evaluate('xnli', 'label')}")

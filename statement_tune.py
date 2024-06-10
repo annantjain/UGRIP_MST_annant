@@ -20,7 +20,7 @@ def parse_args():
     parser.add_argument('--save', type=str, default='./STTS_roberta-base', help='Save path for the final model')
 
     parser.add_argument('--tol', type=int, default=20, help='Tolerance')
-    parser.add_argument('--test_size', type=int, default=0.1, help='Test data size')
+    parser.add_argument('--test_size', type=float, default=0.1, help='Test data size')
 
     parser.add_argument('--tr_ep', type=int, default=2, help='Training Epochs') #4
     parser.add_argument('--tr_batch', type=int, default=8, help='Training Batch Size Per device') #8

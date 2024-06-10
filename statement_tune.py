@@ -114,7 +114,7 @@ training_args = TrainingArguments(
 )
 
 config = AutoConfig.from_pretrained(TRANSFORMER)
-model = AutoModelForSequenceClassification.from_config(config)
+model = AutoModelForSequenceClassification.from_pretrained(config)
 #model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_classes=2)
 
 trainer = Trainer(

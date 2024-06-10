@@ -61,7 +61,7 @@ tolerance = 20
 data = load_dataset('ashabrawy/STTS', cache_dir=CACHE_DIR)
 train = data['train'].filter(lambda example: example["is_true"] is not None).filter(lambda example: len(tokenizer(example['statement'])['input_ids']) < 514+tolerance)
 
-train = train.train_test_split(test_size=opts.tr_size*1000, random_state=SEED)['test']
+train = train.train_test_split(test_size=opts.tr_size*1000)['test']
 train_statements, val_statements, train_labels, val_labels = train_test_split(train['statement'], train['is_true'], test_size=opts.test_size, random_state=SEED)
 
 class StatementDataset(torch.utils.data.Dataset):

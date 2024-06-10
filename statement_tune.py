@@ -118,9 +118,9 @@ training_args = TrainingArguments(
     report_to="wandb",
 )
 
-config = AutoConfig.from_pretrained(TRANSFORMER)
-model = AutoModelForSequenceClassification.from_pretrained(config)
-#model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_classes=2)
+# config = AutoConfig.from_pretrained(TRANSFORMER)
+# model = AutoModelForSequenceClassification.from_pretrained(config)
+model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_labels=2)
 
 trainer = Trainer(
     model=model,                         # the instantiated 🤗 Transformers model to be trained

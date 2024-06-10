@@ -226,4 +226,3 @@ torch
 evaluate
 wandb
 scikit-learn
-accelerate -U

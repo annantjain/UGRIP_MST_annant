@@ -65,7 +65,7 @@ if __name__ == "__main__":
   model = AutoModelForSequenceClassification.from_pretrained(args.model).eval().to(device)
   tokenizer = AutoTokenizer.from_pretrained(args.tokenizer)
 
-  print(f"XCOPA Macro F1: {dataloader_evaluate('xcopa', 'label')}")
-  print(f"XNLI Macro F1: {dataloader_evaluate('xnli', 'label')}")
-  print(f"XWinograd Macro F1: {dataloader_evaluate('xwinograd', 'answer')}")
-  print(f"XStoryCloze Macro F1: {dataloader_evaluate('xstorycloze', 'answer_right_ending')}")
+  print(f"XCOPA Accuracy: {dataloader_evaluate('xcopa', 'label')}")
+  print(f"XNLI Accuracy: {dataloader_evaluate('xnli', 'label')}")
+  print(f"XWinograd Accuracy: {dataloader_evaluate('xwinograd', 'answer')}")
+  print(f"XStoryCloze Accuracy: {dataloader_evaluate('xstorycloze', 'answer_right_ending')}")

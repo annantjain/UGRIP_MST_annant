@@ -29,6 +29,8 @@ def parse_args():
     parser.add_argument('--lr', type=float, default=1e-06, help='Learning rate') #
     parser.add_argument('--decay', type=float, default=0.01, help='Weight Decay')
 
+    parser.add_argument('--tr_size', type=int, default=50, help='Dataset size in thousands')
+
 
     opts = parser.parse_args()
     return opts
@@ -36,6 +38,9 @@ def parse_args():
 
 opts = parse_args()
 
+SEED = 42
+torch.manual_seed(SEED)
+torch.cuda.manual_seed_all(SEED)
 
 EXPERIMENT_NAME = opts.Exp_name #"roberta-base"
 CACHE_DIR = opts.cache #"/scratch/afz225/.cache"
@@ -56,8 +61,8 @@ tolerance = 20
 data = load_dataset('ashabrawy/STTS', cache_dir=CACHE_DIR)
 train = data['train'].filter(lambda example: example["is_true"] is not None).filter(lambda example: len(tokenizer(example['statement'])['input_ids']) < 514+tolerance)
 
-#train = train.train_test_split(test_size=50000)['test']
-train_statements, val_statements, train_labels, val_labels = train_test_split(train['statement'], train['is_true'], test_size=opts.test_size)
+train = train.train_test_split(test_size=opts.tr_size*1000)['test']
+train_statements, val_statements, train_labels, val_labels = train_test_split(train['statement'], train['is_true'], test_size=opts.test_size, random_state=SEED)
 
 class StatementDataset(torch.utils.data.Dataset):
     def __init__(self, statements, labels):
@@ -113,9 +118,9 @@ training_args = TrainingArguments(
     report_to="wandb",
 )
 
-config = AutoConfig.from_pretrained(TRANSFORMER)
-model = AutoModelForSequenceClassification.from_pretrained(config)
-#model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_classes=2)
+# config = AutoConfig.from_pretrained(TRANSFORMER)
+# model = AutoModelForSequenceClassification.from_pretrained(config)
+model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_labels=2)
 
 trainer = Trainer(
     model=model,                         # the instantiated 🤗 Transformers model to be trained

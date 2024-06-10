@@ -16,7 +16,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--Exp_name', type=str, default='roberta-base', help='Experiement Name of Run')
     parser.add_argument('--transformer', type=str, default='roberta-base', help='Transformer Model to be used')
-    parser.add_argument('--cache', type=str, default='/scratch/afz225/.cache', help='Cache with Dataset')
+    parser.add_argument('--cache', type=str, default='', help='Cache with Dataset')
     parser.add_argument('--save', type=str, default='./STTS_roberta-base', help='Save path for the final model')
 
     parser.add_argument('--tol', type=int, default=20, help='Tolerance')

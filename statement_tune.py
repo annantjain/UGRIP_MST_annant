@@ -16,6 +16,7 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--Exp_name', type=str, default='roberta-base', help='Experiement Name of Run')
     parser.add_argument('--transformer', type=str, default='roberta-base', help='Transformer Model to be used')
+    parser.add_argument('--tokenizer', type=str, default=None, help="Tokenizer To use")
     parser.add_argument('--cache', type=str, default='', help='Cache with Dataset')
     parser.add_argument('--save', type=str, default='./STTS_roberta-base', help='Save path for the final model')
 
@@ -55,7 +56,10 @@ wandb.init(
 )
    
 TRANSFORMER=opts.transformer
-tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
+if opts.tokenizer == None:
+    tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
+else:
+    tokenizer = AutoTokenizer.from_pretrained(opts.tokenizer)
 
 tolerance = 20
 data = load_dataset('ashabrawy/STTS', cache_dir=CACHE_DIR)

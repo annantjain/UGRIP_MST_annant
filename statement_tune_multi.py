@@ -58,7 +58,7 @@ TRANSFORMER=opts.transformer
 tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
 
 tolerance = 20
-data = load_dataset('mbzuai-ugrip-statement-tuning/MLC-Full', cache_dir=CACHE_DIR)
+data = load_dataset('mbzuai-ugrip-statement-tuning/MLC-Full-Revised', cache_dir=CACHE_DIR)
 train = data['train'].filter(lambda example: example["label"] is not None).filter(lambda example: len(tokenizer(example['Text'])['input_ids']) < 514+tolerance)
 
 # train = train.train_test_split(test_size=opts.tr_size*1000)['test']

@@ -16,13 +16,11 @@ def parse_args():
     parser = argparse.ArgumentParser()
     parser.add_argument('--Exp_name', type=str, default='roberta-base', help='Experiement Name of Run')
     parser.add_argument('--transformer', type=str, default='roberta-base', help='Transformer Model to be used')
-    parser.add_argument('--tokenizer', type=str, default=None, help="Tokenizer To use")
-    parser.add_argument('--cache', type=str, default='/scratch/afz225/.cache', help='Cache with Dataset')
-    parser.add_argument('--dataset', type=str, default='ashabrawy/STTS', help='Dataset to be trained on')
+    parser.add_argument('--cache', type=str, default='', help='Cache with Dataset')
     parser.add_argument('--save', type=str, default='./STTS_roberta-base', help='Save path for the final model')
 
     parser.add_argument('--tol', type=int, default=20, help='Tolerance')
-    parser.add_argument('--test_size', type=int, default=0.1, help='Test data size')
+    parser.add_argument('--test_size', type=float, default=0.1, help='Test data size')
 
     parser.add_argument('--tr_ep', type=int, default=2, help='Training Epochs') #4
     parser.add_argument('--tr_batch', type=int, default=8, help='Training Batch Size Per device') #8
@@ -31,7 +29,7 @@ def parse_args():
     parser.add_argument('--lr', type=float, default=1e-06, help='Learning rate') #
     parser.add_argument('--decay', type=float, default=0.01, help='Weight Decay')
 
-    parser.add_argument('--tr_size', type=int, default=50, help='Weight Decay')
+    parser.add_argument('--tr_size', type=int, default=50, help='Dataset size in thousands')
 
 
     opts = parser.parse_args()
@@ -39,7 +37,6 @@ def parse_args():
 
 
 opts = parse_args()
-
 
 SEED = 42
 torch.manual_seed(SEED)
@@ -53,21 +50,18 @@ os.environ["WANDB_PROJECT"]=f"{EXPERIMENT_NAME}_train"
 wandb.login()
 wandb.init(
     entity="mbzuai-ugrip",
-    project=f"{EXPERIMENT_NAME}_train",
+    project=f"{EXPERIMENT_NAME}_train_multi",
     name=f"{EXPERIMENT_NAME}_{opts.lr}_{opts.tr_batch}_{opts.warmup}_{opts.decay}"
 )
    
 TRANSFORMER=opts.transformer
-if opts.tokenizer == None:
-    tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
-else:
-    tokenizer = AutoTokenizer.from_pretrained(opts.tokenizer)
+tokenizer = AutoTokenizer.from_pretrained(TRANSFORMER)
 
 tolerance = 20
-data = load_dataset(opts.dataset, cache_dir=CACHE_DIR)
+data = load_dataset('mbzuai-ugrip-statement-tuning/MultiLingualCombination', cache_dir=CACHE_DIR)
 train = data['train'].filter(lambda example: example["label"] is not None).filter(lambda example: len(tokenizer(example['Text'])['input_ids']) < 514+tolerance)
 
-#train = train.train_test_split(test_size=opts.tr_size*1000)['test'] #Adjust?
+# train = train.train_test_split(test_size=opts.tr_size*1000)['test']
 train_statements, val_statements, train_labels, val_labels = train_test_split(train['Text'], train['label'], test_size=opts.test_size, random_state=SEED)
 
 class StatementDataset(torch.utils.data.Dataset):
@@ -104,17 +98,16 @@ def compute_metrics(eval_pred):
 data_collator = DataCollatorWithPadding(tokenizer = tokenizer)
 
 
-print("------------Data Loaded---------------------")
 
 training_args = TrainingArguments(
-    output_dir=f'./{EXPERIMENT_NAME}-outputs',          # output directory
+    output_dir=f'./{EXPERIMENT_NAME}-multi-outputs',          # output directory
     num_train_epochs=opts.tr_ep,              # total number of training epochs
     per_device_train_batch_size=opts.tr_batch,  # batch size per device during training
     per_device_eval_batch_size=opts.ev_batch,   # batch size for evaluation
     warmup_ratio=opts.warmup,                # number of warmup steps for learning rate scheduler
     learning_rate=opts.lr,
     weight_decay=opts.decay,               # strength of weight decay
-    logging_dir=f'./{EXPERIMENT_NAME}-logs',            # directory for storing logs
+    logging_dir=f'./{EXPERIMENT_NAME}-multi-logs',            # directory for storing logs
     logging_steps=1000,
     save_steps=1000,
     evaluation_strategy='steps',
@@ -125,8 +118,8 @@ training_args = TrainingArguments(
     report_to="wandb",
 )
 
-#config = AutoConfig.from_pretrained(TRANSFORMER)
-#model = AutoModelForSequenceClassification.from_pretrained(config)
+# config = AutoConfig.from_pretrained(TRANSFORMER)
+# model = AutoModelForSequenceClassification.from_pretrained(config)
 model = AutoModelForSequenceClassification.from_pretrained(TRANSFORMER,num_labels=2)
 
 trainer = Trainer(

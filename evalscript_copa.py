@@ -58,15 +58,15 @@ if __name__ == "__main__":
   parser.add_argument("--model", help='HuggingFace path to model')
   parser.add_argument("--tokenizer", help="HuggingFace tokenizer type")
   parser.add_argument("--cache", help='cachedir for HuggingFace datasets', default=None)
-  
+
+  '''
+  tokenizer for XLMR: FacebookAI/xlm-roberta-base
+  tokenizer for mBERT: google-bert/bert-base-multilingual-cased
+  '''
   args = parser.parse_args()
 
   device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
   model = AutoModelForSequenceClassification.from_pretrained(args.model).eval().to(device)
   tokenizer = AutoTokenizer.from_pretrained(args.tokenizer)
-
+  
   print(f"COPA Accuracy: {dataloader_evaluate('copa', 'label')}")
-  print(f"XCOPA Accuracy: {dataloader_evaluate('xcopa', 'label')}")
-  print(f"XNLI Accuracy: {dataloader_evaluate('xnli', 'label')}")
-  print(f"XWinograd Accuracy: {dataloader_evaluate('xwinograd', 'answer')}")
-  print(f"XStoryCloze Accuracy: {dataloader_evaluate('xstorycloze', 'answer_right_ending')}")
